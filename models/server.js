@@ -3,13 +3,17 @@ import cors from 'cors';
 import 'dotenv/config';
 import express from 'express';
 import { dbConnection } from '../database/config.js';
-import { router } from '../routes/user.js';
+import { authRouter } from '../routes/auth.js';
+import { userRouter } from '../routes/user.js';
 
 export class Server {
 
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
+
+        this.userPath = '/api/users';
+        this.authPath = '/api/auth';
 
         // connect to DB cafe
         this.connectDB();
@@ -38,7 +42,8 @@ export class Server {
     }
 
     routes() {
-        this.app.use('/api/users', router);
+        this.app.use(this.userPath, userRouter);
+        this.app.use(this.authPath, authRouter);
     }
 
     listen() {

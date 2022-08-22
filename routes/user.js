@@ -9,20 +9,25 @@ import {
     putUsers
 } from '../controllers/user.js';
 import { emailExists, isRoleValid, userExistsById } from '../helpers/db-validators.js';
-import { validarCampos } from '../middleware/validar-campos.js';
+import {
+    esAdminRole,
+    tieneRole,
+    validarCampos,
+    validarJWT
+} from '../middleware/index.js';
 
-const router = Router();
+const userRouter = Router();
 
-router.get('/', getUsers);
+userRouter.get('/', getUsers);
 
-router.put('/:id', [
+userRouter.put('/:id', [
     check('id', 'ID no valido').isMongoId(),
     check('id').custom(userExistsById),
     check('role').custom(isRoleValid),
     validarCampos
 ], putUsers);
 
-router.post('/', [
+userRouter.post('/', [
     check('name', 'nombre obligatorio').notEmpty(),
     check('password', 'password mas de 6 letras').isLength({ min: 6 }),
     check('email', 'El correo no es  valido').isEmail(),
@@ -31,10 +36,14 @@ router.post('/', [
     check('role').custom(isRoleValid),
     validarCampos
 ], postUsers);
-router.delete('/:id', [
+
+userRouter.delete('/:id', [
+    validarJWT,
+    esAdminRole,
+    tieneRole('ADMIN_ROLE'),
     check('id', 'ID no valido').isMongoId(),
     check('id').custom(userExistsById),
     validarCampos
 ], deleteUsers);
 
-export { router };
+export { userRouter };
