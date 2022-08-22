@@ -2,6 +2,7 @@
 import cors from 'cors';
 import 'dotenv/config';
 import express from 'express';
+import { dbConnection } from '../database/config.js';
 import { router } from '../routes/user.js';
 
 export class Server {
@@ -10,12 +11,18 @@ export class Server {
         this.app = express();
         this.port = process.env.PORT;
 
+        // connect to DB cafe
+        this.connectDB();
         // middleware; para servir carpeta publica
         // son funciones que siempre se ejecutan al levantar el server.
         this.middlewares();
 
         //rutas de aplicación.
         this.routes();
+    }
+
+    async connectDB() {
+        await dbConnection();
     }
 
     middlewares() {
