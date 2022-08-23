@@ -3,8 +3,10 @@ import cors from 'cors';
 import 'dotenv/config';
 import express from 'express';
 import { dbConnection } from '../database/config.js';
-import { authRouter } from '../routes/auth.js';
-import { userRouter } from '../routes/user.js';
+import {
+    authRouter,
+    userRouter
+} from '../routes/index.js';
 
 export class Server {
 
