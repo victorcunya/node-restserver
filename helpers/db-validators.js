@@ -37,11 +37,21 @@ const productExistsById = async (id = '') => {
     }
 }
 
+const validateCollection = async (collection = '', collections = []) => {
+
+    const included = collections.includes(collection);
+    if (!included) {
+        throw new Error(`La colección ${collection} no permitida - ${collections}`);
+    }
+    return true;
+}
+
 export {
     isRoleValid,
     emailExists,
     userExistsById,
     categoryExistsById,
-    productExistsById
+    productExistsById,
+    validateCollection
 };
 

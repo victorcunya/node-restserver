@@ -24,6 +24,9 @@ const productSchema = Schema({
         type: Number,
         default: 0,
         required: [true, 'Precio requerido']
+    },
+    image: {
+        type: String
     }
 })
 

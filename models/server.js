@@ -24,8 +24,8 @@ export class Server {
             category: '/api/categories',
             user: '/api/users',
             product: '/api/products',
-            search: '/api/search',
-            upload: '/api/upload',
+            search: '/api/searches',
+            upload: '/api/uploads',
         }
 
         // connect to DB cafe
@@ -57,7 +57,7 @@ export class Server {
             useTempFiles: true,
             tempFileDir: '/tmp/',
             createParentPath: true,
-            debug: true,
+            // debug: true,
         }));
     }
 
