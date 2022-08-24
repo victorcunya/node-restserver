@@ -1,4 +1,4 @@
-import { validationResult } from "express-validator";
+import { validationResult } from 'express-validator';
 
 
 const validarCampos = (req, res, next) => {

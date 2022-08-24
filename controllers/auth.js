@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import { request, response } from 'express';
 import { googleVerify } from '../helpers/google-verify.js';
 import { generateJWT } from '../helpers/jwt.js';
-import { User } from '../models/user.js';
+import { User } from '../models/index.js';
 
 const login = async (req = request, res = response) => {
 

@@ -1,6 +1,6 @@
-import { validarCampos } from '../middleware/validar-campos.js';
-import { validarJWT } from '../middleware/validar-jwt.js';
-import { esAdminRole, tieneRole } from '../middleware/validar-rol.js';
+import { validarCampos } from './validar-campos.js';
+import { validarJWT } from './validar-jwt.js';
+import { esAdminRole, tieneRole } from './validar-rol.js';
 
 export {
     validarCampos,

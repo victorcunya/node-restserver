@@ -5,6 +5,9 @@ import express from 'express';
 import { dbConnection } from '../database/config.js';
 import {
     authRouter,
+    categoryRouter,
+    productRouter,
+    searchRouter,
     userRouter
 } from '../routes/index.js';
 
@@ -14,8 +17,13 @@ export class Server {
         this.app = express();
         this.port = process.env.PORT;
 
-        this.userPath = '/api/users';
-        this.authPath = '/api/auth';
+        this.path = {
+            auth: '/api/auth',
+            category: '/api/categories',
+            user: '/api/users',
+            product: '/api/products',
+            search: '/api/search',
+        }
 
         // connect to DB cafe
         this.connectDB();
@@ -44,8 +52,11 @@ export class Server {
     }
 
     routes() {
-        this.app.use(this.userPath, userRouter);
-        this.app.use(this.authPath, authRouter);
+        this.app.use(this.path.user, userRouter);
+        this.app.use(this.path.auth, authRouter);
+        this.app.use(this.path.category, categoryRouter);
+        this.app.use(this.path.product, productRouter);
+        this.app.use(this.path.search, searchRouter);
     }
 
     listen() {

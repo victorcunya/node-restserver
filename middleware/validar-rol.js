@@ -1,4 +1,4 @@
-import { request, response } from "express";
+import { request, response } from 'express';
 
 
 const esAdminRole = (req = request, res = response, next) => {
@@ -24,7 +24,6 @@ const tieneRole = (...roles) => {
 
     return (req = request, res = response, next) => {
 
-
         const user = req.user;
         if (!user) {
             return res.status(500).json({
@@ -33,7 +32,6 @@ const tieneRole = (...roles) => {
         }
 
         if (!user.role.includes(roles)) {
-            console.log(user.role, roles)
             return res.status(401).json({
                 msg: `Se requiere uno de los sgte roles ${roles}`
             })
