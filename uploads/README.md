@@ -1,0 +1,1 @@
+# Carpeta para carga de imgs

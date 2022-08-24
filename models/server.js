@@ -2,12 +2,14 @@
 import cors from 'cors';
 import 'dotenv/config';
 import express from 'express';
+import fileUpload from 'express-fileupload';
 import { dbConnection } from '../database/config.js';
 import {
     authRouter,
     categoryRouter,
     productRouter,
     searchRouter,
+    uploadRouter,
     userRouter
 } from '../routes/index.js';
 
@@ -23,6 +25,7 @@ export class Server {
             user: '/api/users',
             product: '/api/products',
             search: '/api/search',
+            upload: '/api/upload',
         }
 
         // connect to DB cafe
@@ -49,6 +52,13 @@ export class Server {
         // directorio publico
         this.app.use(express.static('public'));
 
+        // carga de archivos
+        this.app.use(fileUpload({
+            useTempFiles: true,
+            tempFileDir: '/tmp/',
+            createParentPath: true,
+            debug: true,
+        }));
     }
 
     routes() {
@@ -57,6 +67,7 @@ export class Server {
         this.app.use(this.path.category, categoryRouter);
         this.app.use(this.path.product, productRouter);
         this.app.use(this.path.search, searchRouter);
+        this.app.use(this.path.upload, uploadRouter);
     }
 
     listen() {
