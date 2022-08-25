@@ -1,7 +1,7 @@
 
 import { Router } from 'express';
 import { check } from 'express-validator';
-import { showImage, updateFile, uploadFile } from '../controllers/upload.js';
+import { showImage, updateFile, updateFileCloudinary, uploadFile } from '../controllers/upload.js';
 import { validateCollection } from '../helpers/db-validators.js';
 import { validarCampos, validateFile } from '../middleware/index.js';
 
@@ -17,7 +17,8 @@ uploadRouter.put('/:collection/:id', [
     check('collection')
         .custom(col => validateCollection(col, ['users', 'products'])),
     validarCampos
-], updateFile);
+], updateFileCloudinary);
+// ], updateFile);
 
 uploadRouter.get('/:collection/:id', [
     check('id', 'Mongo ID no valido').isMongoId(),

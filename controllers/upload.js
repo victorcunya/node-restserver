@@ -1,8 +1,12 @@
 import { request, response } from 'express';
 import fs from 'fs';
 import path from 'path';
+import { getModelBy } from '../helpers/db-validators.js';
 import { upload } from '../helpers/upload.js';
-import { Product, User } from '../models/index.js';
+import { v2 as cloudinary } from 'cloudinary';
+
+cloudinary.config(process.env.CLOUDINARY_URL)
+
 
 const uploadFile = async (req = request, res = response) => {
 
@@ -19,28 +23,10 @@ const updateFile = async (req = request, res = response) => {
 
     const { id, collection } = req.params;
     let model;
-
-    switch (collection) {
-        case 'users':
-            model = await User.findById(id);
-            if (!model) {
-                res.status(404).json({
-                    msg: `No existe usuario con ${id}`
-                })
-            }
-            break;
-        case 'products':
-            model = await Product.findById(id);
-            if (!model) {
-                res.status(404).json({
-                    msg: `No existe producto con ${id}`
-                })
-            }
-            break;
-        default:
-            return res.status(500).json({
-                msg: 'Se me olvidó validar esta collection'
-            })
+    try {
+        model = await getModelBy(collection, id);
+    } catch (error) {
+        return res.status(404).json({ msg: error.message });
     }
 
     if (model.image) {
@@ -58,49 +44,53 @@ const updateFile = async (req = request, res = response) => {
     res.json(model);
 }
 
+
+const updateFileCloudinary = async (req = request, res = response) => {
+
+    const { id, collection } = req.params;
+    let model;
+    try {
+        model = await getModelBy(collection, id);
+    } catch (error) {
+        return res.status(404).json({ msg: error.message });
+    }
+
+    if (model.image) {
+        const nameArr = model.image.split('/')
+        const name = nameArr[nameArr.length - 1];
+        const [public_id] = name.split('.')
+        cloudinary.uploader.destroy(public_id)
+            .then((ok) => console.log(ok))
+            .catch((error) => console.log(error))
+    }
+
+    const { tempFilePath } = req.files.file
+    const data = await cloudinary.uploader.upload(tempFilePath);
+    const { secure_url } = data
+    model.image = secure_url
+    await model.save()
+
+    res.json(model);
+}
+
 const showImage = async (req = request, res = response) => {
 
     const { id, collection } = req.params;
     let model;
-
-    switch (collection) {
-        case 'users':
-            model = await User.findById(id);
-            if (!model) {
-                res.status(404).json({
-                    msg: `No existe usuario con ${id}`
-                })
-            }
-            break;
-        case 'products':
-            model = await Product.findById(id);
-            if (!model) {
-                res.status(404).json({
-                    msg: `No existe producto con ${id}`
-                })
-            }
-            break;
-        default:
-            return res.status(500).json({
-                msg: 'Se me olvidó validar esta collection'
-            })
+    try {
+        model = await getModelBy(collection, id);
+    } catch (error) {
+        return res.status(404).json({ msg: error.message });
     }
 
-    if (model.image) {
-        const pathImage = path.join(process.cwd(), '/uploads/', collection, model.image);
+    const pathImage = (model.image)
+        ? path.join(process.cwd(), '/uploads/', collection, model.image)
+        : path.join(process.cwd(), '/assets/no_image.jpg')
 
-        if (fs.existsSync(pathImage)) {
-            return res.sendFile(pathImage)
-        }
-
-    }
-
-    res.json({
-        msg: 'Falta el placeholder'
-    });
+    res.sendFile(pathImage)
 }
 
 export {
-    uploadFile, updateFile, showImage
+    uploadFile, updateFile, showImage, updateFileCloudinary
 };
 
